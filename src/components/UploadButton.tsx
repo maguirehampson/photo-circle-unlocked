@@ -2,7 +2,7 @@
 import React from "react";
 import { Upload } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { toast } from "@/components/ui/sonner";
+import { toast } from "sonner";
 
 const UploadButton: React.FC = () => {
   const handleUpload = () => {

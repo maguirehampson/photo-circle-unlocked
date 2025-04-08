@@ -1,11 +1,10 @@
-
 import React, { useState, useEffect } from "react";
 import Navbar from "@/components/Navbar";
 import PhotoGrid from "@/components/PhotoGrid";
 import UploadButton from "@/components/UploadButton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Photo } from "@/components/PhotoGrid";
-import { toast } from "@/components/ui/sonner";
+import { toast } from "sonner";
 
 const mockPhotos: Photo[] = [
   {
