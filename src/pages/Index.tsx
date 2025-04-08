@@ -1,10 +1,13 @@
+
 import React, { useState, useEffect } from "react";
 import Navbar from "@/components/Navbar";
 import PhotoGrid from "@/components/PhotoGrid";
 import UploadButton from "@/components/UploadButton";
+import PhotoOrganizer from "@/components/PhotoOrganizer";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Photo } from "@/components/PhotoGrid";
 import { toast } from "sonner";
+import { loadModels } from "@/services/faceDetection";
 
 const mockPhotos: Photo[] = [
   {
@@ -71,8 +74,22 @@ const mockPhotos: Photo[] = [
 
 const Index = () => {
   const [activeTab, setActiveTab] = useState("feed");
+  const [faceApiLoaded, setFaceApiLoaded] = useState(false);
 
   useEffect(() => {
+    // Try to load face-api.js models
+    const loadFaceDetectionModels = async () => {
+      const loaded = await loadModels();
+      setFaceApiLoaded(loaded);
+      if (loaded) {
+        console.log("Face detection models loaded successfully");
+      } else {
+        console.warn("Face detection models could not be loaded");
+      }
+    };
+    
+    loadFaceDetectionModels();
+    
     // Simulate notifications
     setTimeout(() => {
       toast("New photos from Saylor", {
@@ -93,11 +110,15 @@ const Index = () => {
         <Tabs defaultValue="feed" className="w-full" onValueChange={setActiveTab}>
           <TabsList className="mb-6">
             <TabsTrigger value="feed">Feed</TabsTrigger>
+            <TabsTrigger value="people">People</TabsTrigger>
             <TabsTrigger value="tagged">Tagged</TabsTrigger>
             <TabsTrigger value="discover">Discover</TabsTrigger>
           </TabsList>
           <TabsContent value="feed" className="mt-0">
             <PhotoGrid photos={mockPhotos} />
+          </TabsContent>
+          <TabsContent value="people" className="mt-0">
+            <PhotoOrganizer photos={mockPhotos} />
           </TabsContent>
           <TabsContent value="tagged" className="mt-0">
             <PhotoGrid photos={mockPhotos.filter((photo) => photo.username === "Saylor")} />

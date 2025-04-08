@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import FaceTag from "@/components/FaceTag";
+import PeopleTagView from "@/components/PeopleTagView";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -83,9 +84,10 @@ const photoData = {
 const PhotoView = () => {
   const { id } = useParams<{ id: string }>();
   const [showFaceTags, setShowFaceTags] = useState(true);
-  const [activeTab, setActiveTab] = useState("all");
+  const [activeTab, setActiveTab] = useState("details");
   const [liked, setLiked] = useState(false);
   const [commentText, setCommentText] = useState("");
+  const [taggedPeople, setTaggedPeople] = useState(photoData.taggedPeople);
   
   // In a real app, we would fetch the photo data based on the id
   console.log(`Loading photo with id: ${id}`);
@@ -114,6 +116,10 @@ const PhotoView = () => {
     }
   };
   
+  const handlePeopleUpdate = (people: Person[]) => {
+    setTaggedPeople(people);
+  };
+  
   return (
     <div className="min-h-screen bg-background">
       <Navbar />
@@ -131,7 +137,7 @@ const PhotoView = () => {
                   alt={`Photo by ${photoData.username}`}
                   className="w-full h-auto"
                 />
-                {showFaceTags && photoData.taggedPeople.map((person) => (
+                {showFaceTags && taggedPeople.map((person) => (
                   <FaceTag
                     key={person.id}
                     x={person.facePosition.x}
@@ -163,38 +169,53 @@ const PhotoView = () => {
           </div>
           
           <div>
-            <Card className="p-4">
-              <div className="flex items-center justify-between mb-4">
-                <div className="flex items-center space-x-2">
-                  <Avatar>
-                    <AvatarImage src={photoData.userAvatar} alt={photoData.username} />
-                    <AvatarFallback>{photoData.username[0]}</AvatarFallback>
-                  </Avatar>
-                  <div>
-                    <p className="font-medium">{photoData.username}</p>
-                    <p className="text-xs text-muted-foreground">{photoData.timestamp}</p>
+            <Tabs defaultValue="details" className="w-full" onValueChange={setActiveTab}>
+              <TabsList className="w-full mb-4">
+                <TabsTrigger value="details" className="flex-1">Details</TabsTrigger>
+                <TabsTrigger value="people" className="flex-1">People</TabsTrigger>
+                <TabsTrigger value="comments" className="flex-1">Comments</TabsTrigger>
+              </TabsList>
+              
+              <TabsContent value="details">
+                <Card className="p-4">
+                  <div className="flex items-center justify-between mb-4">
+                    <div className="flex items-center space-x-2">
+                      <Avatar>
+                        <AvatarImage src={photoData.userAvatar} alt={photoData.username} />
+                        <AvatarFallback>{photoData.username[0]}</AvatarFallback>
+                      </Avatar>
+                      <div>
+                        <p className="font-medium">{photoData.username}</p>
+                        <p className="text-xs text-muted-foreground">{photoData.timestamp}</p>
+                      </div>
+                    </div>
                   </div>
-                </div>
-              </div>
+                  
+                  <p className="mb-4">{photoData.description}</p>
+                  
+                  <div className="mb-6">
+                    <p className="text-sm font-medium mb-2">Tagged People:</p>
+                    <div className="flex flex-wrap gap-2">
+                      {taggedPeople.map((person) => (
+                        <Badge key={person.id} variant="secondary">{person.name}</Badge>
+                      ))}
+                    </div>
+                  </div>
+                </Card>
+              </TabsContent>
               
-              <p className="mb-4">{photoData.description}</p>
+              <TabsContent value="people">
+                <Card className="p-4">
+                  <PeopleTagView 
+                    taggedPeople={taggedPeople}
+                    imageUrl={photoData.imageUrl}
+                    onPersonUpdate={handlePeopleUpdate}
+                  />
+                </Card>
+              </TabsContent>
               
-              <div className="mb-6">
-                <p className="text-sm font-medium mb-2">Tagged People:</p>
-                <div className="flex flex-wrap gap-2">
-                  {photoData.taggedPeople.map((person) => (
-                    <Badge key={person.id} variant="secondary">{person.name}</Badge>
-                  ))}
-                </div>
-              </div>
-              
-              <Tabs defaultValue="all" className="w-full" onValueChange={setActiveTab}>
-                <TabsList className="w-full mb-4">
-                  <TabsTrigger value="all" className="flex-1">All</TabsTrigger>
-                  <TabsTrigger value="you" className="flex-1">You</TabsTrigger>
-                </TabsList>
-                
-                <TabsContent value="all">
+              <TabsContent value="comments">
+                <Card className="p-4">
                   <div className="space-y-4">
                     {photoData.comments.map((comment) => (
                       <div key={comment.id} className="flex gap-2">
@@ -212,26 +233,20 @@ const PhotoView = () => {
                       </div>
                     ))}
                   </div>
-                </TabsContent>
-                
-                <TabsContent value="you">
-                  <div className="text-center py-4">
-                    <p className="text-muted-foreground">Only showing comments that mention you</p>
-                  </div>
-                </TabsContent>
-                
-                <form onSubmit={handleSendComment} className="mt-4 flex gap-2">
-                  <input
-                    type="text"
-                    placeholder="Add a comment..."
-                    value={commentText}
-                    onChange={(e) => setCommentText(e.target.value)}
-                    className="flex-1 px-3 py-2 border rounded-md"
-                  />
-                  <Button type="submit" disabled={!commentText.trim()}>Send</Button>
-                </form>
-              </Tabs>
-            </Card>
+                  
+                  <form onSubmit={handleSendComment} className="mt-4 flex gap-2">
+                    <input
+                      type="text"
+                      placeholder="Add a comment..."
+                      value={commentText}
+                      onChange={(e) => setCommentText(e.target.value)}
+                      className="flex-1 px-3 py-2 border rounded-md"
+                    />
+                    <Button type="submit" disabled={!commentText.trim()}>Send</Button>
+                  </form>
+                </Card>
+              </TabsContent>
+            </Tabs>
           </div>
         </div>
       </main>
