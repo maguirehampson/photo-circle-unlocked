@@ -1,26 +1,14 @@
+
 import React, { useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import Navbar from "@/components/Navbar";
-import FaceTag from "@/components/FaceTag";
 import PeopleTagView from "@/components/PeopleTagView";
-import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Download, Heart, MessageCircle, Share2, User } from "lucide-react";
 import { toast } from "sonner";
-
-interface Person {
-  id: string;
-  name: string;
-  facePosition: {
-    x: number;
-    y: number;
-    width: number;
-    height: number;
-  };
-}
+import PhotoDisplay from "@/components/photo-view/PhotoDisplay";
+import PhotoDetails from "@/components/photo-view/PhotoDetails";
+import CommentsSection from "@/components/photo-view/CommentsSection";
+import { Person } from "@/components/photo-view/types";
 
 // Mock photo data for our detailed view
 const photoData = {
@@ -83,10 +71,7 @@ const photoData = {
 
 const PhotoView = () => {
   const { id } = useParams<{ id: string }>();
-  const [showFaceTags, setShowFaceTags] = useState(true);
   const [activeTab, setActiveTab] = useState("details");
-  const [liked, setLiked] = useState(false);
-  const [commentText, setCommentText] = useState("");
   const [taggedPeople, setTaggedPeople] = useState(photoData.taggedPeople);
   
   // In a real app, we would fetch the photo data based on the id
@@ -94,26 +79,6 @@ const PhotoView = () => {
   
   const handlePersonClick = (person: Person) => {
     toast(`Selected: ${person.name}`);
-  };
-  
-  const handleDownload = () => {
-    toast.success("Photo saved to your library");
-  };
-  
-  const handleLike = () => {
-    setLiked(!liked);
-  };
-  
-  const handleShare = () => {
-    toast.success("Share link copied to clipboard");
-  };
-  
-  const handleSendComment = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (commentText.trim()) {
-      toast.success("Comment added");
-      setCommentText("");
-    }
   };
   
   const handlePeopleUpdate = (people: Person[]) => {
@@ -129,44 +94,11 @@ const PhotoView = () => {
         </Link>
         
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          <div className="lg:col-span-2">
-            <Card className="overflow-hidden">
-              <div className="relative">
-                <img
-                  src={photoData.imageUrl}
-                  alt={`Photo by ${photoData.username}`}
-                  className="w-full h-auto"
-                />
-                {showFaceTags && taggedPeople.map((person) => (
-                  <FaceTag
-                    key={person.id}
-                    x={person.facePosition.x}
-                    y={person.facePosition.y}
-                    width={person.facePosition.width}
-                    height={person.facePosition.height}
-                    name={person.name}
-                    onClick={() => handlePersonClick(person)}
-                  />
-                ))}
-              </div>
-            </Card>
-            
-            <div className="mt-4 flex gap-2">
-              <Button variant="outline" size="sm" onClick={() => setShowFaceTags(!showFaceTags)}>
-                {showFaceTags ? "Hide" : "Show"} Face Tags
-              </Button>
-              <Button variant="outline" size="sm" onClick={handleDownload}>
-                <Download className="h-4 w-4 mr-1" /> Save
-              </Button>
-              <Button variant={liked ? "default" : "outline"} size="sm" onClick={handleLike}>
-                <Heart className={`h-4 w-4 mr-1 ${liked ? "fill-current" : ""}`} /> 
-                {liked ? "Liked" : "Like"}
-              </Button>
-              <Button variant="outline" size="sm" onClick={handleShare}>
-                <Share2 className="h-4 w-4 mr-1" /> Share
-              </Button>
-            </div>
-          </div>
+          <PhotoDisplay 
+            imageUrl={photoData.imageUrl}
+            taggedPeople={taggedPeople}
+            onPersonClick={handlePersonClick}
+          />
           
           <div>
             <Tabs defaultValue="details" className="w-full" onValueChange={setActiveTab}>
@@ -177,74 +109,25 @@ const PhotoView = () => {
               </TabsList>
               
               <TabsContent value="details">
-                <Card className="p-4">
-                  <div className="flex items-center justify-between mb-4">
-                    <div className="flex items-center space-x-2">
-                      <Avatar>
-                        <AvatarImage src={photoData.userAvatar} alt={photoData.username} />
-                        <AvatarFallback>{photoData.username[0]}</AvatarFallback>
-                      </Avatar>
-                      <div>
-                        <p className="font-medium">{photoData.username}</p>
-                        <p className="text-xs text-muted-foreground">{photoData.timestamp}</p>
-                      </div>
-                    </div>
-                  </div>
-                  
-                  <p className="mb-4">{photoData.description}</p>
-                  
-                  <div className="mb-6">
-                    <p className="text-sm font-medium mb-2">Tagged People:</p>
-                    <div className="flex flex-wrap gap-2">
-                      {taggedPeople.map((person) => (
-                        <Badge key={person.id} variant="secondary">{person.name}</Badge>
-                      ))}
-                    </div>
-                  </div>
-                </Card>
+                <PhotoDetails
+                  username={photoData.username}
+                  userAvatar={photoData.userAvatar}
+                  timestamp={photoData.timestamp}
+                  description={photoData.description}
+                  taggedPeople={taggedPeople}
+                />
               </TabsContent>
               
               <TabsContent value="people">
-                <Card className="p-4">
-                  <PeopleTagView 
-                    taggedPeople={taggedPeople}
-                    imageUrl={photoData.imageUrl}
-                    onPersonUpdate={handlePeopleUpdate}
-                  />
-                </Card>
+                <PeopleTagView 
+                  taggedPeople={taggedPeople}
+                  imageUrl={photoData.imageUrl}
+                  onPersonUpdate={handlePeopleUpdate}
+                />
               </TabsContent>
               
               <TabsContent value="comments">
-                <Card className="p-4">
-                  <div className="space-y-4">
-                    {photoData.comments.map((comment) => (
-                      <div key={comment.id} className="flex gap-2">
-                        <Avatar className="h-8 w-8">
-                          <AvatarImage src={comment.avatar} alt={comment.username} />
-                          <AvatarFallback>{comment.username[0]}</AvatarFallback>
-                        </Avatar>
-                        <div>
-                          <div className="bg-secondary p-3 rounded-lg">
-                            <p className="font-medium text-sm">{comment.username}</p>
-                            <p className="text-sm">{comment.text}</p>
-                          </div>
-                          <p className="text-xs text-muted-foreground mt-1">{comment.timestamp}</p>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                  
-                  <form onSubmit={handleSendComment} className="mt-4 flex gap-2">
-                    <input
-                      type="text"
-                      placeholder="Add a comment..."
-                      value={commentText}
-                      onChange={(e) => setCommentText(e.target.value)}
-                      className="flex-1 px-3 py-2 border rounded-md"
-                    />
-                    <Button type="submit" disabled={!commentText.trim()}>Send</Button>
-                  </form>
-                </Card>
+                <CommentsSection comments={photoData.comments} />
               </TabsContent>
             </Tabs>
           </div>
