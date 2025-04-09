@@ -32,18 +32,19 @@ export const detectFaces = async (imageElement: HTMLImageElement) => {
     // Use DeepFace for detection
     const deepfaceResults = await detectFacesWithDeepFace(imageElement);
     
-    // If DeepFace failed, use mock data
-    if (deepfaceResults.length === 0) {
-      console.log('Using fallback mock data for face detection');
-      return getMockDetections();
+    // If DeepFace detection returns results, use them
+    if (deepfaceResults.length > 0) {
+      return deepfaceResults;
     }
     
-    return deepfaceResults;
+    // If no faces detected with DeepFace, use mock data
+    console.log('No faces detected with DeepFace, using fallback mock data');
+    return getMockDetections();
   } catch (error) {
     console.error('Error detecting faces:', error);
     
     // Fallback to mock data if all methods fail
-    console.log('Using fallback mock data for face detection');
+    console.log('Error in face detection, using fallback mock data');
     return getMockDetections();
   }
 };
@@ -85,4 +86,3 @@ const getMockDetections = () => {
     }
   ];
 };
-
