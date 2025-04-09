@@ -1,0 +1,11 @@
+﻿services:
+  db:
+    container_name: photo-circle-db
+    image: postgres:15
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: photocircle
+    ports:
+      - "5433:5432"
+    restart: always

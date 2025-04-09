@@ -1,0 +1,46 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String    @id @default(cuid())
+  email         String    @unique
+  username      String    @unique
+  name          String
+  passwordHash  String
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  bio           String?
+  avatarUrl     String?
+  uploadedPhotos Photo[]  @relation("UploadedPhotos")
+  taggedInPhotos PhotoTag[] @relation("TaggedUsers")
+}
+
+model Photo {
+  id          String    @id @default(cuid())
+  url         String
+  uploaderId  String
+  uploader    User      @relation("UploadedPhotos", fields: [uploaderId], references: [id])
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  caption     String?
+  location    String?
+  tags        PhotoTag[]
+}
+
+model PhotoTag {
+  id          String   @id @default(cuid())
+  photoId     String
+  photo       Photo    @relation(fields: [photoId], references: [id])
+  userId      String
+  user        User     @relation("TaggedUsers", fields: [userId], references: [id])
+  boundingBox Json?
+  confidence  Float?
+  createdAt   DateTime @default(now())
+  @@unique([photoId, userId])
+}
