@@ -6,6 +6,8 @@ import DetectionResults from "./DetectionResults";
 import { Person } from "@/components/photo-view/types";
 import { toast } from "sonner";
 import { detectFaces } from "@/services/faceDetection";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { InfoIcon } from "lucide-react";
 
 interface TestDeepFaceSectionProps {
   modelsStatus: 'loading' | 'loaded' | 'error';
@@ -51,6 +53,20 @@ const TestDeepFaceSection: React.FC<TestDeepFaceSectionProps> = ({ modelsStatus 
   return (
     <div className="mt-10">
       <h2 className="text-xl font-bold mb-4">Test DeepFace AI</h2>
+      
+      <Alert variant="default" className="bg-blue-50 border-blue-200 mb-4">
+        <InfoIcon className="h-4 w-4 text-blue-500" />
+        <AlertDescription className="text-blue-700">
+          <p>For optimal face detection accuracy:</p>
+          <ul className="list-disc pl-5 mt-1 space-y-1">
+            <li>Use well-lit photos with clear, forward-facing subjects</li>
+            <li>Ensure faces are not obscured or at extreme angles</li>
+            <li>Quality may vary with group photos or challenging lighting</li>
+            <li>Check confidence scores to understand prediction reliability</li>
+          </ul>
+        </AlertDescription>
+      </Alert>
+      
       <Card>
         <CardHeader>
           <CardTitle>Try Face Detection</CardTitle>
