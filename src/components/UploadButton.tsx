@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/dialog";
 import { Progress } from "@/components/ui/progress";
 import { loadModels, detectFaces } from "@/services/faceDetection";
+import { Person } from "@/components/photo-view/types";
 
 const UploadButton: React.FC = () => {
   const [isUploading, setIsUploading] = useState(false);
@@ -22,6 +23,7 @@ const UploadButton: React.FC = () => {
   const [previewUrls, setPreviewUrls] = useState<string[]>([]);
   const [isProcessingFaces, setIsProcessingFaces] = useState(false);
   const [modelsLoaded, setModelsLoaded] = useState(false);
+  const [detectedFaces, setDetectedFaces] = useState<Person[]>([]);
   const fileInputRef = useRef<HTMLInputElement>(null);
   
   // Load face detection models when component mounts
@@ -67,6 +69,7 @@ const UploadButton: React.FC = () => {
     
     try {
       let totalFacesDetected = 0;
+      const allDetectedFaces: Person[] = [];
       
       // Process each image for face detection
       for (const file of files) {
@@ -80,13 +83,39 @@ const UploadButton: React.FC = () => {
         });
         
         // Run face detection
-        const detectedFaces = await detectFaces(img);
-        totalFacesDetected += detectedFaces.length;
+        const detectedFaceResults = await detectFaces(img);
+        totalFacesDetected += detectedFaceResults.length;
+        
+        // Map to our application's person format
+        const detectedPersons = detectedFaceResults.map(face => {
+          // Handle different property structures from different detection methods
+          const facePosition = face.boundingBox || face.facePosition || {
+            x: face.region?.x || 0,
+            y: face.region?.y || 0,
+            width: face.region?.w || 10,
+            height: face.region?.h || 10
+          };
+          
+          return {
+            id: face.id,
+            name: 'Unknown Person',
+            facePosition: {
+              x: facePosition.x,
+              y: facePosition.y,
+              width: facePosition.width,
+              height: facePosition.height
+            },
+            demographics: face.demographics
+          };
+        });
+        
+        allDetectedFaces.push(...detectedPersons);
         
         // Clean up the object URL
         URL.revokeObjectURL(imageUrl);
       }
       
+      setDetectedFaces(allDetectedFaces);
       return totalFacesDetected;
     } catch (error) {
       console.error("Error processing faces:", error);
@@ -122,6 +151,15 @@ const UploadButton: React.FC = () => {
               description: `${facesCount} faces detected in your photos`,
               icon: <ScanFace className="h-4 w-4" />
             });
+            
+            // If we have demographic information, show it
+            const facesWithDemographics = detectedFaces.filter(face => face.demographics);
+            if (facesWithDemographics.length > 0) {
+              toast("Demographics analysis complete", {
+                description: "Age, gender, emotion and ethnicity detected",
+                icon: <ScanFace className="h-4 w-4" />
+              });
+            }
           } else {
             toast("No faces detected", {
               description: "Try uploading photos with clearer faces"
