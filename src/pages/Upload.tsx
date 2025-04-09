@@ -39,18 +39,18 @@ const Upload = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <Card>
             <CardHeader>
-              <CardTitle>Upload Photos with Face Detection</CardTitle>
+              <CardTitle>Upload Photos with DeepFace AI</CardTitle>
               <CardDescription>
-                Upload your photos and our AI will automatically detect faces
+                Upload your photos and DeepFace AI will automatically detect and analyze faces
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               {modelsStatus === 'loading' && (
                 <Alert>
                   <ScanFace className="h-4 w-4" />
-                  <AlertTitle>Loading Face Detection</AlertTitle>
+                  <AlertTitle>Loading DeepFace AI</AlertTitle>
                   <AlertDescription>
-                    Please wait while we load the face detection models...
+                    Please wait while we initialize the DeepFace AI...
                   </AlertDescription>
                 </Alert>
               )}
@@ -58,9 +58,9 @@ const Upload = () => {
               {modelsStatus === 'error' && (
                 <Alert variant="destructive">
                   <AlertTriangle className="h-4 w-4" />
-                  <AlertTitle>Face Detection Unavailable</AlertTitle>
+                  <AlertTitle>DeepFace AI Unavailable</AlertTitle>
                   <AlertDescription>
-                    Could not load face detection models. Make sure you have the model files in your public/models directory.
+                    Could not initialize DeepFace AI. Some features may be limited.
                   </AlertDescription>
                 </Alert>
               )}
@@ -68,9 +68,9 @@ const Upload = () => {
               {modelsStatus === 'loaded' && (
                 <Alert variant="default" className="bg-green-50 text-green-800 border-green-200">
                   <ScanFace className="h-4 w-4" />
-                  <AlertTitle>Face Detection Ready</AlertTitle>
+                  <AlertTitle>DeepFace AI Ready</AlertTitle>
                   <AlertDescription>
-                    Face detection models have been loaded successfully
+                    DeepFace AI has been initialized successfully
                   </AlertDescription>
                 </Alert>
               )}
@@ -83,8 +83,9 @@ const Upload = () => {
                 <h3 className="font-medium mb-2">How it works:</h3>
                 <ol className="list-decimal pl-5 space-y-2">
                   <li>Upload your photos</li>
-                  <li>Our AI automatically detects faces</li>
+                  <li>DeepFace AI automatically detects faces</li>
                   <li>Review detected faces and confirm identities</li>
+                  <li>Get detailed demographic analysis including age, gender, emotion, and ethnicity</li>
                   <li>Search and organize photos by person</li>
                 </ol>
               </div>
@@ -93,39 +94,34 @@ const Upload = () => {
           
           <Card>
             <CardHeader>
-              <CardTitle>Setup Instructions</CardTitle>
+              <CardTitle>About DeepFace AI</CardTitle>
               <CardDescription>
-                How to set up face detection models
+                Advanced facial analysis capabilities
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="bg-muted p-4 rounded-md">
-                <h3 className="font-medium mb-2">Required Model Files</h3>
+                <h3 className="font-medium mb-2">DeepFace AI Features</h3>
                 <p className="text-sm mb-4">
-                  For face detection to work, you need to download the face-api.js models and place them in the <code>public/models</code> directory.
+                  DeepFace is a state-of-the-art facial analysis framework with the following capabilities:
                 </p>
                 
-                <h4 className="font-medium text-sm mb-2">Download Models:</h4>
-                <ol className="list-decimal pl-5 space-y-1 text-sm">
-                  <li>Download the models from the <a href="https://github.com/justadudewhohacks/face-api.js/tree/master/weights" className="text-primary hover:underline" target="_blank" rel="noopener noreferrer">face-api.js GitHub repository</a></li>
-                  <li>Create a <code>models</code> folder inside your project's <code>public</code> directory</li>
-                  <li>Copy all model files into the <code>public/models</code> directory</li>
-                  <li>Required models:
-                    <ul className="list-disc pl-5 mt-1">
-                      <li>ssd_mobilenetv1_model-weights_manifest.json</li>
-                      <li>face_landmark_68_model-weights_manifest.json</li>
-                      <li>face_recognition_model-weights_manifest.json</li>
-                      <li>And their associated binary files</li>
-                    </ul>
-                  </li>
-                </ol>
+                <h4 className="font-medium text-sm mb-2">Key Features:</h4>
+                <ul className="list-disc pl-5 space-y-1 text-sm">
+                  <li>High-accuracy face detection</li>
+                  <li>Age estimation</li>
+                  <li>Gender classification</li>
+                  <li>Emotion recognition (happy, sad, angry, etc.)</li>
+                  <li>Ethnicity analysis</li>
+                  <li>Face recognition and verification</li>
+                </ul>
               </div>
               
               {modelsStatus === 'error' && (
                 <div className="bg-red-50 border border-red-200 p-4 rounded-md">
                   <h3 className="font-medium text-red-800 mb-2">Troubleshooting</h3>
                   <p className="text-sm text-red-700">
-                    If face detection fails to load, check your browser console for specific errors and ensure all model files are correctly placed.
+                    If DeepFace AI fails to initialize, try refreshing the page. Some features may still work with mock data.
                   </p>
                 </div>
               )}

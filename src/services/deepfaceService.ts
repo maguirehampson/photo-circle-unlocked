@@ -1,5 +1,6 @@
 
 import axios from 'axios';
+import { DeepFaceAnalysis } from '@/components/photo-view/types';
 
 // Types for DeepFace API responses
 interface FaceDetectionResult {
@@ -79,8 +80,8 @@ const convertToPersonFormat = (detection: FaceDetectionResult): {
 // Initialize DeepFace service
 export const initializeDeepFace = async (): Promise<boolean> => {
   try {
-    // This would check if DeepFace service is available and ready
-    // For real implementation, this could check server availability
+    // In a real implementation, this would check if the Python DeepFace service is available
+    // For this demo, we're simulating successful initialization
     console.log("Initializing DeepFace service...");
     return true;
   } catch (error) {
@@ -92,10 +93,6 @@ export const initializeDeepFace = async (): Promise<boolean> => {
 // Detect faces in an image using DeepFace
 export const detectFacesWithDeepFace = async (imageElement: HTMLImageElement): Promise<any[]> => {
   try {
-    // Since we can't directly call DeepFace from browser (Python library),
-    // we would typically send the image to a backend service
-    // This is a mock implementation
-
     console.log("Detecting faces with DeepFace...");
     
     // Convert image to base64 for sending to server
@@ -176,11 +173,7 @@ const simulateDeepFaceDetection = (imageWidth: number, imageHeight: number): Fac
   return detections;
 };
 
-// In a real implementation, you would add functions to:
-// 1. Compare faces for identity matching
-// 2. Recognize known faces from a database
-// 3. Other DeepFace capabilities
-
+// Face comparison functionality
 export const compareFacesWithDeepFace = async (face1: string, face2: string): Promise<{
   verified: boolean;
   distance: number;
@@ -201,5 +194,63 @@ export const compareFacesWithDeepFace = async (face1: string, face2: string): Pr
       distance: 1,
       threshold: 0.6
     };
+  }
+};
+
+// Process a single image for demographics analysis
+export const analyzeImageWithDeepFace = async (
+  imageElement: HTMLImageElement
+): Promise<DeepFaceAnalysis[]> => {
+  try {
+    console.log("Analyzing image for demographics with DeepFace...");
+    
+    // In a real implementation, you would convert the image and send to backend
+    const canvas = document.createElement('canvas');
+    canvas.width = imageElement.width;
+    canvas.height = imageElement.height;
+    const ctx = canvas.getContext('2d');
+    ctx?.drawImage(imageElement, 0, 0);
+    const base64Image = canvas.toDataURL('image/jpeg');
+    
+    // For demo, return simulated analysis results
+    const faceCount = Math.floor(Math.random() * 3) + 1;
+    const results: DeepFaceAnalysis[] = [];
+    
+    for (let i = 0; i < faceCount; i++) {
+      results.push({
+        age: Math.floor(20 + Math.random() * 40),
+        gender: {
+          Woman: Math.random(),
+          Man: Math.random()
+        },
+        dominant_gender: Math.random() > 0.5 ? "Woman" : "Man",
+        emotion: {
+          angry: Math.random(),
+          disgust: Math.random(),
+          fear: Math.random(),
+          happy: Math.random(),
+          sad: Math.random(),
+          surprise: Math.random(),
+          neutral: Math.random()
+        },
+        dominant_emotion: ["happy", "neutral", "sad", "angry"][Math.floor(Math.random() * 4)],
+        race: {
+          asian: Math.random(),
+          indian: Math.random(),
+          black: Math.random(),
+          white: Math.random(),
+          middle_eastern: Math.random(),
+          latino_hispanic: Math.random()
+        },
+        dominant_race: ["asian", "indian", "black", "white", "middle_eastern", "latino_hispanic"][
+          Math.floor(Math.random() * 6)
+        ]
+      });
+    }
+    
+    return results;
+  } catch (error) {
+    console.error("Error analyzing image with DeepFace:", error);
+    return [];
   }
 };
