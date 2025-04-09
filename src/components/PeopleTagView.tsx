@@ -3,8 +3,13 @@ import React, { useState } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Check, X, User, UserPlus } from "lucide-react";
+import { Check, X, User, UserPlus, Info } from "lucide-react";
 import { toast } from "sonner";
+import {
+  HoverCard,
+  HoverCardContent,
+  HoverCardTrigger,
+} from "@/components/ui/hover-card";
 
 interface Person {
   id: string;
@@ -16,6 +21,12 @@ interface Person {
     height: number;
   };
   confirmed?: boolean;
+  demographics?: {
+    age?: number;
+    gender?: string;
+    emotion?: string;
+    ethnicity?: string;
+  };
 }
 
 interface PeopleTagViewProps {
@@ -70,6 +81,12 @@ const PeopleTagView: React.FC<PeopleTagViewProps> = ({
         y,
         width: 15,
         height: 15
+      },
+      demographics: {
+        age: Math.floor(20 + Math.random() * 40),
+        gender: Math.random() > 0.5 ? "Man" : "Woman",
+        emotion: ["happy", "neutral", "sad"][Math.floor(Math.random() * 3)],
+        ethnicity: ["asian", "white", "black", "latino hispanic"][Math.floor(Math.random() * 4)]
       }
     };
     
@@ -80,6 +97,40 @@ const PeopleTagView: React.FC<PeopleTagViewProps> = ({
     if (onPersonUpdate) {
       onPersonUpdate([...people, newPerson]);
     }
+  };
+  
+  // Format demographic information for display
+  const formatDemographics = (demographics?: Person["demographics"]) => {
+    if (!demographics) return null;
+    
+    return (
+      <div className="space-y-1">
+        {demographics.age && (
+          <div className="flex items-center justify-between">
+            <span className="text-sm text-muted-foreground">Age:</span>
+            <span className="text-sm font-medium">{Math.round(demographics.age)} years</span>
+          </div>
+        )}
+        {demographics.gender && (
+          <div className="flex items-center justify-between">
+            <span className="text-sm text-muted-foreground">Gender:</span>
+            <span className="text-sm font-medium">{demographics.gender}</span>
+          </div>
+        )}
+        {demographics.emotion && (
+          <div className="flex items-center justify-between">
+            <span className="text-sm text-muted-foreground">Emotion:</span>
+            <span className="text-sm font-medium capitalize">{demographics.emotion}</span>
+          </div>
+        )}
+        {demographics.ethnicity && (
+          <div className="flex items-center justify-between">
+            <span className="text-sm text-muted-foreground">Ethnicity:</span>
+            <span className="text-sm font-medium capitalize">{demographics.ethnicity}</span>
+          </div>
+        )}
+      </div>
+    );
   };
   
   return (
@@ -144,6 +195,25 @@ const PeopleTagView: React.FC<PeopleTagViewProps> = ({
                   <span className="font-medium">{person.name}</span>
                   {person.confirmed && (
                     <Badge variant="outline" className="ml-2">Confirmed</Badge>
+                  )}
+                  
+                  {person.demographics && (
+                    <HoverCard>
+                      <HoverCardTrigger asChild>
+                        <Button variant="ghost" size="icon" className="h-6 w-6 rounded-full">
+                          <Info className="h-3.5 w-3.5" />
+                        </Button>
+                      </HoverCardTrigger>
+                      <HoverCardContent className="w-56">
+                        <div className="space-y-2">
+                          <h5 className="text-sm font-medium">Demographics</h5>
+                          {formatDemographics(person.demographics)}
+                          <div className="text-xs text-muted-foreground pt-2">
+                            <em>Powered by DeepFace AI</em>
+                          </div>
+                        </div>
+                      </HoverCardContent>
+                    </HoverCard>
                   )}
                 </div>
                 
