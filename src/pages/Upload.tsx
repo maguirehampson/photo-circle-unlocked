@@ -4,14 +4,14 @@ import Navbar from "@/components/Navbar";
 import UploadButton from "@/components/UploadButton";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { ScanFace, AlertTriangle, Upload } from "lucide-react";
+import { ScanFace, AlertTriangle, UploadIcon } from "lucide-react";
 import { loadModels, detectFaces } from "@/services/faceDetection";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Person } from "@/components/photo-view/types";
 
-const Upload = () => {
+const UploadPage = () => {
   const [modelsStatus, setModelsStatus] = useState<'loading' | 'loaded' | 'error'>('loading');
   const [testImage, setTestImage] = useState<string | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
@@ -208,7 +208,7 @@ const Upload = () => {
                       className="border-2 border-dashed border-gray-300 rounded-lg p-12 flex flex-col items-center justify-center cursor-pointer hover:bg-gray-50"
                       onClick={handleTestImageClick}
                     >
-                      <Upload className="h-8 w-8 text-gray-400 mb-2" />
+                      <UploadIcon className="h-8 w-8 text-gray-400 mb-2" />
                       <p className="text-sm text-gray-500">Click to upload a test image</p>
                     </div>
                   ) : (
@@ -302,4 +302,4 @@ const Upload = () => {
   );
 };
 
-export default Upload;
+export default UploadPage;
