@@ -5,6 +5,7 @@ interface ImageWithDOM extends HTMLImageElement {
   complete: boolean;
   width: number;
   height: number;
+  onload: ((this: GlobalEventHandlers, ev: Event) => any) | null;
 }
 
 import { detectFacesWithDeepFace, initializeDeepFace } from './deepfaceService';
@@ -34,7 +35,7 @@ export const detectFaces = async (imageElement: HTMLImageElement) => {
     const img = imageElement as ImageWithDOM;
     if (!img.complete) {
       await new Promise<void>((resolve) => {
-        img.onload = () => resolve();
+        img.onload = (event) => resolve();
       });
     }
 

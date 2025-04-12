@@ -48,9 +48,8 @@ export const detectFacesWithDeepFace = async (imageElement: HTMLImageElement): P
     // For now, we'll return mock data based on the image dimensions
     console.log('Mock face detection with DeepFace for image:', imageElement);
     
-    // Create mock data based on image dimensions for more realistic simulation
-    const imageWidth = imageElement.width || 1000;
-    const imageHeight = imageElement.height || 800;
+    // We don't need to use the dimensions in our mock implementation
+    // so we'll remove the unused variables
     
     // Return empty array to simulate no faces detected
     // (This will trigger the fallback to mock data in faceDetection.ts)
