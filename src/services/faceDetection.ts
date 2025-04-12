@@ -2,7 +2,7 @@
 // typecast HTMLImageElement to include the DOM properties
 interface ImageWithDOM extends HTMLImageElement {
   complete: boolean;
-  onload: () => void;
+  onload: (this: GlobalEventHandlers, ev: Event) => any;
   width: number;
   height: number;
 }
@@ -33,8 +33,8 @@ export const detectFaces = async (imageElement: HTMLImageElement) => {
     // Wait for the image to be fully loaded
     const img = imageElement as ImageWithDOM;
     if (!img.complete) {
-      await new Promise((resolve) => {
-        img.onload = resolve;
+      await new Promise<void>((resolve) => {
+        img.onload = () => resolve();
       });
     }
 

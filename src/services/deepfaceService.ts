@@ -45,8 +45,12 @@ export const initializeDeepFace = async (): Promise<boolean> => {
 export const detectFacesWithDeepFace = async (imageElement: HTMLImageElement): Promise<DetectedFace[]> => {
   try {
     // This would actually use the DeepFace library to detect faces
-    // For now, we'll return mock data
-    console.log('Mock face detection with DeepFace');
+    // For now, we'll return mock data based on the image dimensions
+    console.log('Mock face detection with DeepFace for image:', imageElement.src);
+    
+    // Create mock data based on image dimensions for more realistic simulation
+    const imageWidth = imageElement.width || 1000;
+    const imageHeight = imageElement.height || 800;
     
     // Return empty array to simulate no faces detected
     // (This will trigger the fallback to mock data in faceDetection.ts)
