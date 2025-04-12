@@ -1,34 +1,28 @@
+import React from 'react';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import Index from "@/pages";
+import PhotoView from "@/pages/PhotoView";
+import Profile from "@/pages/Profile";
+import Upload from "@/pages/Upload";
+import NotFound from "@/pages/NotFound";
+import { Toaster } from "sonner";
+import './App.css';
+import FaceRecognitionTest from "@/pages/FaceRecognitionTest";
 
-import { Toaster } from "@/components/ui/toaster";
-import { Toaster as Sonner } from "@/components/ui/sonner";
-import { TooltipProvider } from "@/components/ui/tooltip";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import Index from "./pages/Index";
-import NotFound from "./pages/NotFound";
-import Profile from "./pages/Profile";
-import PhotoView from "./pages/PhotoView";
-import Upload from "./pages/Upload";
-
-const queryClient = new QueryClient();
-
-const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Index />} />
-          <Route path="/profile" element={<Profile />} />
-          <Route path="/photo/:id" element={<PhotoView />} />
-          <Route path="/upload" element={<Upload />} />
-          {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </BrowserRouter>
-    </TooltipProvider>
-  </QueryClientProvider>
-);
+function App() {
+  return (
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<Index />} />
+        <Route path="/photo/:id" element={<PhotoView />} />
+        <Route path="/profile/:id?" element={<Profile />} />
+        <Route path="/upload" element={<Upload />} />
+        <Route path="/face-test" element={<FaceRecognitionTest />} />
+        <Route path="*" element={<NotFound />} />
+      </Routes>
+      <Toaster position="top-center" />
+    </BrowserRouter>
+  );
+}
 
 export default App;
