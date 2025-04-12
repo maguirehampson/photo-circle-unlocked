@@ -1,11 +1,10 @@
-
 // Define a custom ImageWithDOM interface instead of relying on HTMLImageElement DOM properties
 // This makes our code more TypeScript-friendly
 interface ImageWithDOM extends HTMLImageElement {
   complete: boolean;
   width: number;
   height: number;
-  onload: ((this: GlobalEventHandlers, ev: Event) => any) | null;
+  onload: ((this: HTMLElement, ev: Event) => any) | null;
 }
 
 import { detectFacesWithDeepFace, initializeDeepFace } from './deepfaceService';
@@ -35,7 +34,7 @@ export const detectFaces = async (imageElement: HTMLImageElement) => {
     const img = imageElement as ImageWithDOM;
     if (!img.complete) {
       await new Promise<void>((resolve) => {
-        img.onload = (event) => resolve();
+        img.onload = () => resolve();
       });
     }
 
