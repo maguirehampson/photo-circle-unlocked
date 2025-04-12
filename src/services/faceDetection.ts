@@ -1,8 +1,8 @@
 
-// typecast HTMLImageElement to include the DOM properties
+// Define a custom ImageWithDOM interface instead of relying on HTMLImageElement DOM properties
+// This makes our code more TypeScript-friendly
 interface ImageWithDOM extends HTMLImageElement {
   complete: boolean;
-  onload: (this: GlobalEventHandlers, ev: Event) => any;
   width: number;
   height: number;
 }
