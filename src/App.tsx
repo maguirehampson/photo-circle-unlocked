@@ -1,13 +1,14 @@
+
 import React from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import Index from "@/pages";
-import PhotoView from "@/pages/PhotoView";
-import Profile from "@/pages/Profile";
-import Upload from "@/pages/Upload";
-import NotFound from "@/pages/NotFound";
+import Index from "./pages/Index";
+import PhotoView from "./pages/PhotoView";
+import Profile from "./pages/Profile";
+import Upload from "./pages/Upload";
+import NotFound from "./pages/NotFound";
 import { Toaster } from "sonner";
 import './App.css';
-import FaceRecognitionTest from "@/pages/FaceRecognitionTest";
+import FaceRecognitionTest from "./pages/FaceRecognitionTest";
 
 function App() {
   return (

@@ -1,4 +1,12 @@
 
+// typecast HTMLImageElement to include the DOM properties
+interface ImageWithDOM extends HTMLImageElement {
+  complete: boolean;
+  onload: () => void;
+  width: number;
+  height: number;
+}
+
 import { detectFacesWithDeepFace, initializeDeepFace } from './deepfaceService';
 
 // Configuration and setup for DeepFace
@@ -23,9 +31,10 @@ export const loadModels = async () => {
 export const detectFaces = async (imageElement: HTMLImageElement) => {
   try {
     // Wait for the image to be fully loaded
-    if (!imageElement.complete) {
+    const img = imageElement as ImageWithDOM;
+    if (!img.complete) {
       await new Promise((resolve) => {
-        imageElement.onload = resolve;
+        img.onload = resolve;
       });
     }
 
